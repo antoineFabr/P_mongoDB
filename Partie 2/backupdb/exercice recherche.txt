@@ -1,0 +1,150 @@
+Exercice Recherche Avancé NOSQL MONGODB
+
+1)
+use("db_restaurant");
+db.restaurants.find();
+2)
+db.restaurants.find(
+  {},
+  {
+    name: 1,
+    borough: 1,
+
+    cuisine: 1,
+    restaurant_id: 1,
+  }
+);
+3)
+db.restaurants.find(
+  {},
+  {
+    name: 1,
+    borough: 1,
+    "address.zipcode": 1,
+    restaurant_id: 1,
+    _id: 0,
+  }
+);
+4)
+db.restaurants.find({ borough: { $eq: "Bronx" } }).limit(5);
+5)
+db.restaurants.find({
+  $and: [{ "grades.score": { $gt: 80 } }, { "grades.score": { $lt: 100 } }],
+});
+6)
+db.restaurants.find({
+  $and: [
+    { cuisine: { $ne: "American" } },
+
+    { "grades.score": { $gt: 70 } },
+
+    { "address.coord": { $lt: -65.754168 } },
+  ],
+});
+7)
+db.restaurants.find(
+  {
+    name: {
+      $regex: /^Wil/,
+    },
+  },
+  {
+    restaurant_id: 1,
+    name: 1,
+    borough: 1,
+    cuisine: 1,
+    _id: 0,
+  }
+);
+15)
+db.restaurants.find(
+  {
+    $and: [
+      {
+        borough: {
+          $eq: "Bronx",
+        },
+      },
+      {
+        $or: [
+          {
+            cuisine: { $eq: "American" },
+          },
+          {
+            cuisine: {
+              $eq: "Chinese",
+            },
+          },
+        ],
+      },
+    ],
+  },
+  {
+    restaurant_id: 1,
+    name: 1,
+    borough: 1,
+    cuisine: 1,
+    _id: 0,
+  }
+);
+16)
+db.restaurants.find(
+  {
+    $and: [
+      {
+        borough: {
+          $ne: "Bronx",
+        },
+      },
+      {
+        borough: {
+          $ne: "Staten Island",
+        },
+      },
+      {
+        borough: {
+          $ne: "Queens",
+        },
+      },
+      {
+        borough: {
+          $ne: "Brooklyn",
+        },
+      },
+    ],
+  },
+  {
+    restaurant_id: 1,
+    name: 1,
+    borough: 1,
+    cuisine: 1,
+    _id: 0,
+  }
+);
+17)
+db.restaurants.find(
+  {
+    grades: {
+      $elemMatch: {
+        date: ISODate("2014-08-11T00:00:00Z"),
+        grade: "A",
+        score: 11,
+      },
+    },
+  },
+  {
+    _id: 0,
+    restaurant_id: 1,
+    name: 1,
+    grades: {
+      $elemMatch: {
+        date: ISODate("2014-08-11T00:00:00Z"),
+        grade: "A",
+        score: 11,
+      },
+    },
+  }
+);
+18)
+
+

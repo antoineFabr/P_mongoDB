@@ -1,0 +1,4 @@
+{"_id":{"$oid":"6797344345c51bf695567d89"}}
+{"_id":{"$oid":"679734a645c61bf695567d8a"},"firstname":"Doe","lastname":"John"}
+{"_id":{"$oid":"67973601404e7d531b55a9de"},"firstname":"Doe","lastname":"John"}
+{"_id":{"$oid":"67973601404e7d581b55a9df"},"firstname":"paola","lastname":"muller"}
