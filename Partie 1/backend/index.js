@@ -2,8 +2,9 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
+require('dotenv').config({ path: './.env' });
 
-process.loadEnvFile('./.env');
+//process.loadEnvFile('./.env');
 const app = express();
 const port = process.env.PORT || '3000';
 const env = process.env.NODE_ENV || 'development';
@@ -11,7 +12,7 @@ const env = process.env.NODE_ENV || 'development';
 const db = require('./config/database').sequelize;
 const router = require('./routes');
 
-const { UserModel, TodoModel } = require('./models');
+const { User, Todo } = require('./models');
 
 const initApp = async () => {
   try {
@@ -19,12 +20,13 @@ const initApp = async () => {
     await mongoose.connect('mongodb://root:admin@127.0.0.1:27017/test', {
       authSource: 'admin'
     });
-    await db.authenticate();
+    //await db.authenticate();
+    console.log(await Todo.find());
     console.log('La connexion a la base de données été établie avec succès.');
 
     // Synchronize the DB models
-    UserModel.sync({ alter: true });
-    TodoModel.sync({ alter: true });
+    /*userSchema.sync({ alter: true });
+    todoSchema.sync({ alter: true });*/
 
     // Serve the frontend static files
     app.use(express.static('../dist'));

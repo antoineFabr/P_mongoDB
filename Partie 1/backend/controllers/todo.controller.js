@@ -1,5 +1,6 @@
 const Todo = require('../models/todo.model.mongo');
 const User = require('../models/user.model.mongo');
+const mongoose = require('mongoose');
 
 const TodoController = {
   createTodo: async (req, res) => {
@@ -7,12 +8,17 @@ const TodoController = {
     const { text, date } = req.body;
 
     try {
-      const todo = new Todo({ text: text, date: date, completed: false });
+      /*const todo = new Todo({ text: text, date: date, completed: false });
       const user = await User.findById(user_id);
       user.todos.push(todo);
       user.save();
-      console.log(user);
-
+      console.log(user);*/
+      const todo = Todo.create({
+        text: text,
+        date: date,
+        user_id: user_id,
+        completed: false
+      });
       return res.status(201).json(todo);
     } catch (err) {
       return res.status(500);
@@ -35,9 +41,11 @@ const TodoController = {
     const user_id = req.sub;
 
     try {
-      const user = await User.findById(user_id).sort({ date: 'asc' });
-      if (user.todos) {
-        return res.status(200).json(user.todos);
+      //const user = await User.findById(user_id).exec();
+      //const user = await User.findById(user_id).sort({ date: 'asc' });
+      const todos = await Todo.find({ user_id: user_id }).exec();
+      if (todos) {
+        return res.status(200).json(todos);
       }
       return res.status(404);
     } catch {
@@ -90,6 +98,7 @@ const TodoController = {
     const user_id = req.sub;
     const todo_id = req.params.id;
     const query = { id: todo_id, user_id: user_id };
+    Todo.deleteOne({ user_id: user_id });
     TodoModel.destroy({
       where: query
     })
