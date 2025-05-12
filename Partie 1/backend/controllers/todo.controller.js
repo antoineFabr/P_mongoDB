@@ -43,8 +43,9 @@ const TodoController = {
     try {
       //const user = await User.findById(user_id).exec();
       //const user = await User.findById(user_id).sort({ date: 'asc' });
-      const todos = await Todo.find({ user_id: user_id }).exec();
+      const todos = await Todo.find({ user_id: user_id }, '_id text date completed user_id').exec();
       if (todos) {
+        console.log(todos[1]._id);
         return res.status(200).json(todos);
       }
       return res.status(404);
@@ -71,8 +72,10 @@ const TodoController = {
   },
   editTodo: async (req, res) => {
     const user_id = req.sub;
+    const id = req.params.id;
 
-    const user = User.findById(user_id);
+    const todo = await Todo.findById({ _id: id }).updateOne({ completed: true });
+
     /*
     const query = { id: req.params.id, user_id: user_id };
     const data = req.body;
@@ -98,8 +101,10 @@ const TodoController = {
     const user_id = req.sub;
     const todo_id = req.params.id;
     const query = { id: todo_id, user_id: user_id };
-    Todo.deleteOne({ user_id: user_id });
-    TodoModel.destroy({
+    console.log(req.params.id);
+    console.log(req.params);
+    Todo.deleteOne({ _id: todo_id });
+    /*TodoModel.destroy({
       where: query
     })
       .then(() => {
@@ -108,32 +113,30 @@ const TodoController = {
       .catch((error) => {
         console.error('DELETE TODO: ', error);
         return res.status(500);
-      });
+      });*/
   },
   getSearchTodo: async (req, res) => {
     const user_id = req.sub;
     const query = req.query.q;
-    await TodoModel.findAll({
-      where: [
-        {
-          user_id: user_id
-        },
-        Sequelize.literal(`MATCH (text) AGAINST ('*${query}*' IN BOOLEAN MODE)`)
-      ],
-      order: [['date', 'ASC']],
-      attributes: { exclude: ['user_id'] }
-    })
-      .then((result) => {
-        if (result) {
-          return res.status(200).json(result);
-        } else {
-          return res.status(404);
-        }
-      })
-      .catch((error) => {
-        console.error('SEARCH TODO: ', error);
-        return res.status(500);
-      });
+    console.log(query);
+
+    function escapeRegex(str) {
+      return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+    const querySafe = escapeRegex(query);
+    console.log(querySafe);
+
+    const regex = new RegExp(querySafe, 'i');
+    console.log(regex);
+
+    const todos = await Todo.find({
+      user_id: user_id,
+      text: regex
+    }).exec();
+    if (todos) {
+      return res.status(200).json(todos);
+    }
+    return res.status(404);
   }
 };
 
