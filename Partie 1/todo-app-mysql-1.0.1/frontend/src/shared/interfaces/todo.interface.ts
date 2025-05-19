@@ -1,5 +1,5 @@
 export interface Todo {
-  id: string;
+  _id: string;
   date: Date;
   text: string;
   completed: boolean;
