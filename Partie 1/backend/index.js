@@ -8,15 +8,24 @@ require('dotenv').config({ path: './.env' });
 const app = express();
 const port = process.env.PORT || '3000';
 const env = process.env.NODE_ENV || 'development';
+const redis = require('redis');
 
 const db = require('./config/database').sequelize;
 const router = require('./routes');
+
+const redisClient = redis.createClient({
+  url: 'redis://default:admin@localhost:6379'
+});
 
 const { User, Todo } = require('./models');
 
 const initApp = async () => {
   try {
     //Connection à la db
+
+    redisClient.connect();
+    module.exports = redisClient;
+
     await mongoose.connect('mongodb://root:admin@127.0.0.1:27017/test', {
       authSource: 'admin'
     });
